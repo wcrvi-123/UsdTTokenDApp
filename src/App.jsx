@@ -32,35 +32,26 @@ function App() {
       const tronWeb = window.tronWeb || new TronWeb({ fullHost: tronNode });
       const contract = await tronWeb.contract().at(contractAddress);
 
-+     // 1) 读取 decimals
++     // 读取 decimals
 +     const dec = await contract.decimals().call();
 +     const decimals = Number(dec);
++     console.log('decimals:', decimals);
 
-      // 2) 查询原始余额
-      const raw = await contract.balanceOf(addr).call(); 
-+     // raw 是字符串，非常大，转 BigInt
-+     const rawBig = BigInt(raw.toString());
+      // 查询原始余额
+      const raw = await contract.balanceOf(addr).call();
++     console.log('raw (smallest unit):', raw.toString());
 
-+     // 3) 将 BigInt 除以 10^decimals，保留 4 位小数
-+     const base = BigInt(10) ** BigInt(decimals);
-+     // 整数部分
-+     const intPart = rawBig / base;
-+     // 小数部分，保留 4 位
-+     const fracBig = rawBig % base;
-+     const fracStr = fracBig
-+       .toString()
-+       .padStart(decimals, '0') // 前面补零到 decimals 位
-+       .slice(0, 4);            // 截取前 4 位做显示
-+     const formatted = `${intPart.toString()}.${fracStr}`;
+      // 用 BigInt 做高精度运算
+      const rawBig = BigInt(raw.toString());
+      const base = BigInt(10) ** BigInt(decimals);
+      const intPart = rawBig / base;
+      const fracBig = rawBig % base;
+      const fracStr = fracBig.toString().padStart(decimals, '0').slice(0, 4);
+      const formatted = `${intPart.toString()}.${fracStr}`;
+
++     console.log('formatted balance:', formatted);
 
       setBalance(formatted);
-    }
-    if (contractAddress && account) {
-      fetchBalance(account);
-    }
-  }, [contractAddress, account]);
-
-
     }
     if (contractAddress && account) {
       fetchBalance(account);
