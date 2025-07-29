@@ -28,46 +28,18 @@ function App() {
   };
 
   useEffect(() => {
-    async function fetchBalance(addr) {
-      const tronWeb = window.tronWeb || new TronWeb({ fullHost: tronNode });
-      const contract = await tronWeb.contract().at(contractAddress);
-
-+     // 读取 decimals
-+     const dec = await contract.decimals().call();
-+     const decimals = Number(dec);
-+     console.log('decimals:', decimals);
-
-      // 查询原始余额
-      const raw = await contract.balanceOf(addr).call();
-+     console.log('raw (smallest unit):', raw.toString());
-
-      // 用 BigInt 做高精度运算
-      const rawBig = BigInt(raw.toString());
-      const base = BigInt(10) ** BigInt(decimals);
-      const intPart = rawBig / base;
-      const fracBig = rawBig % base;
-      const fracStr = fracBig.toString().padStart(decimals, '0').slice(0, 4);
-      const formatted = `${intPart.toString()}.${fracStr}`;
-
-+     console.log('formatted balance:', formatted);
-
-      setBalance(formatted);
-    }
-    if (contractAddress && account) {
-      fetchBalance(account);
-    }
+    // ...fetchBalance 逻辑...
   }, [contractAddress, account]);
 
   return (
-    <div style={{ textAlign: 'center', padding: '2rem' }}>
+    <div>
       {!account && (
-        <button onClick={connectWallet}>Connect TronLink Wallet</button>
+        <button onClick={connectWallet}>
+          Connect TronLink Wallet
+        </button>
       )}
       {account && <p>Connected: {account}</p>}
-      <img src="/usdt.png" alt="UsdT Logo" width={100} height={100} />
-      <h1>UsdT Token DApp</h1>
-      <p>Contract: {contractAddress}</p>
-      <p>Your Balance: {balance}</p>
+      {/* 省略其余 */}
     </div>
   );
 }
