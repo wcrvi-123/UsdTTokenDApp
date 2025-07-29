@@ -27,12 +27,24 @@ function App() {
     setAccount(window.tronWeb.defaultAddress.base58);
   };
 
-  useEffect(() => {
+    useEffect(() => {
     async function fetchBalance(addr) {
       const tronWeb = window.tronWeb || new TronWeb({ fullHost: tronNode });
       const contract = await tronWeb.contract().at(contractAddress);
-      const result = await contract.balanceOf(addr).call();
-      setBalance(result.toString());
+-     const result = await contract.balanceOf(addr).call();
+-     setBalance(result.toString());
++     const result = await contract.balanceOf(addr).call();
++     // —— 开始格式化代码 —— 
++     const raw = result.toString();
++     const formatted = (Number(raw) / 1e18).toFixed(4);
++     setBalance(formatted);
++     // —— 结束格式化代码 —— 
+    }
+    if (contractAddress && account) {
+      fetchBalance(account);
+    }
+  }, [contractAddress, account]);
+
     }
     if (contractAddress && account) {
       fetchBalance(account);
